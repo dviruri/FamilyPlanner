@@ -1,73 +1,100 @@
-# React + TypeScript + Vite
+# יומן משפחתי — Family Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+אפליקציית ווב לתכנון לוח זמנים משפחתי, מטלות ואירועים.  
+Hebrew RTL · React · TypeScript · Vite · Tailwind CSS · Supabase
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## הרצה מקומית
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env.local   # ← מלא פרטי Supabase
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## הגדרת Supabase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### שלב 1 — יצירת פרויקט
+
+1. גש ל-[supabase.com](https://supabase.com) וצור חשבון
+2. לחץ **New project**
+3. בחר שם, סיסמה ואזור (Region)
+4. המתן לאתחול (~2 דקות)
+
+### שלב 2 — יישום הסכמה
+
+1. לך ל-**SQL Editor** בפרויקט
+2. פתח את הקובץ `supabase/schema.sql` מהפרויקט הזה
+3. הדבק את כל תוכן הקובץ בעורך
+4. לחץ **Run**
+
+הסכמה יוצרת:
+- `families` — משפחות
+- `profiles` — פרופיל לכל משתמש Auth
+- `family_members` — בני משפחה (כולל ילדים ללא חשבון)
+- `events` — אירועים
+- `event_participants` — משתתפי אירוע
+- `tasks` — מטלות
+- `task_checklist_items` — פריטי רשימת תיוג
+
+Row Level Security מוגדר — כל משתמש ניגש רק לנתוני המשפחה שלו.
+
+### שלב 3 — מפתחות API
+
+1. לך ל-**Settings → API**
+2. העתק:
+   - **Project URL** → `VITE_SUPABASE_URL`
+   - **anon / public key** → `VITE_SUPABASE_ANON_KEY`
+3. הדבק ב-`.env.local`:
+
+```env
+VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
+```
+
+### שלב 4 — הפעלת Auth
+
+1. לך ל-**Authentication → Providers**
+2. ודא ש-**Email** מופעל (ברירת מחדל)
+3. אופציונלי: הפעל Google / Apple OAuth לשלב מאוחר יותר
+
+---
+
+## מבנה הפרויקט
+
+```
+src/
+  components/
+    layout/      # AppShell, Sidebar, BottomNav, TopBar
+    ui/          # Button, Card, PageHeader, EmptyState
+  features/
+    dashboard/   # DashboardPage
+    calendar/    # CalendarPage + views
+    tasks/       # TasksPage
+    family/      # FamilyPage
+    auth/        # (שלב 3)
+    settings/    # SettingsPage
+  services/
+    supabase/    # client.ts
+  types/
+    database.ts  # טיפוסי DB (snake_case)
+    index.ts     # ייצוא מרכזי
+  utils/
+  store.ts       # Zustand (מצב זמני עד חיבור ל-Supabase)
+
+supabase/
+  schema.sql     # סכמת DB + RLS
+```
+
+---
+
+## פקודות שימושיות
+
+```bash
+npm run dev        # שרת פיתוח
+npm run build      # build לייצור
+npm run lint       # בדיקת ESLint
 ```
