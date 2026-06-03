@@ -78,7 +78,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   // ── Data hooks ──
   const eventsHook   = useEventsForRange(today, today);
-  const upcomingHook = useEventsForRange(addDays(today, 1), weekEnd);
+  const upcomingHook = useEventsForRange(today, weekEnd);
   const tasksToday   = useTasks({ status: 'active', dueDate: today });
   const tasksOverdue = useTasks({ overdue: true });
 
@@ -223,15 +223,18 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           <div className="space-y-4">
             {upcomingDays.map((dk) => {
               const dayEvts = upcomingByDay.get(dk) ?? [];
+              const isToday = dk === today;
               return (
                 <div key={dk}>
                   {/* Day label */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-semibold text-gray-500">
-                      {formatWeekday(dk)}
+                  <div className={`flex items-center gap-2 mb-2 ${isToday ? 'text-blue-600' : ''}`}>
+                    <span className={`text-xs font-semibold ${isToday ? 'text-blue-600' : 'text-gray-500'}`}>
+                      {isToday ? 'היום' : formatWeekday(dk)}
                     </span>
-                    <span className="text-xs text-gray-400">{formatShortDate(dk)}</span>
-                    <div className="flex-1 h-px bg-gray-100" />
+                    <span className={`text-xs ${isToday ? 'text-blue-400' : 'text-gray-400'}`}>
+                      {formatShortDate(dk)}
+                    </span>
+                    <div className={`flex-1 h-px ${isToday ? 'bg-blue-100' : 'bg-gray-100'}`} />
                   </div>
                   <div className="space-y-2">
                     {dayEvts.map((e) => (
