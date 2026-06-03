@@ -127,7 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${import.meta.env.VITE_APP_URL ?? window.location.origin}/`,
+        // Use current page URL (strips hash/query) — works on any deployment
+        redirectTo: window.location.href.replace(/#.*$/, '').replace(/\?.*$/, ''),
       },
     });
     if (error) return hebrewAuthError(error);
