@@ -37,7 +37,7 @@ export function SettingsPage() {
                 </div>
                 <div className="text-xs text-gray-400 mt-0.5">{s.description}</div>
               </div>
-              {!s.soon && <span className="text-gray-300 text-lg">›</span>}
+              {!s.soon && <span className="text-gray-300 text-lg">‹</span>}
             </div>
           </Card>
         ))}

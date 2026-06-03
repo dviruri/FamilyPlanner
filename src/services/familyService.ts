@@ -74,8 +74,8 @@ export async function createFamily(
   });
 
   if (error) {
-    console.error('[familyService] createFamily:', error);
-    return { familyId: null, error: hebrewDbError(error.message) };
+    console.error('[familyService] createFamily error:', JSON.stringify(error));
+    return { familyId: null, error: hebrewDbError(error.message ?? error.code ?? '') };
   }
 
   return { familyId: data as string, error: null };

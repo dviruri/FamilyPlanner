@@ -68,7 +68,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             onClick={() => onNavigate('calendar')}
             className="text-sm text-blue-500 hover:text-blue-700 font-medium"
           >
-            כל היומן ›
+            ‹ כל היומן
           </button>
         </div>
 
@@ -136,7 +136,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             onClick={() => onNavigate('tasks')}
             className="text-sm text-blue-500 hover:text-blue-700 font-medium"
           >
-            כל המטלות ›
+            ‹ כל המטלות
           </button>
         </div>
         <Card>
@@ -158,7 +158,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             onClick={() => onNavigate('calendar')}
             className="text-sm text-blue-500 hover:text-blue-700 font-medium"
           >
-            תצוגת שבוע ›
+            ‹ תצוגת שבוע
           </button>
         </div>
         <Card>

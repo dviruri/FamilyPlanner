@@ -52,14 +52,14 @@ export function Header() {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Navigation */}
+      {/* Navigation — RTL: הקודם(›) on right, הבא(‹) on left */}
       <div className="flex items-center gap-2">
         <button
-          onClick={() => navigate(1)}
+          onClick={() => navigate(-1)}
           className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 font-bold text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           title="הקודם"
         >
-          ‹
+          ›
         </button>
         <button
           onClick={goToday}
@@ -68,11 +68,11 @@ export function Header() {
           היום
         </button>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(1)}
           className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 font-bold text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           title="הבא"
         >
-          ›
+          ‹
         </button>
       </div>
 

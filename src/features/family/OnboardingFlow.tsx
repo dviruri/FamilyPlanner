@@ -102,7 +102,7 @@ function StepCreateFamily({
         disabled={!canContinue}
         onClick={() => onNext(familyName.trim(), displayName.trim(), color)}
       >
-        המשך →
+        המשך ←
       </Button>
     </div>
   );
