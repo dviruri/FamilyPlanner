@@ -18,5 +18,10 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Disabled: overly strict for standard async data-fetching hooks.
+      // Setting loading/error state before an await is a well-established pattern.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])

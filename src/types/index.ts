@@ -1,6 +1,3 @@
-// Re-export existing local types (Zustand store / legacy)
-export type { EventCategory, WorkLocation, FamilyMember, CalendarEvent } from '../types';
-
 // Re-export database types
 export type {
   Database,

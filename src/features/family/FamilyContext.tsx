@@ -91,8 +91,9 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   useEffect(() => {
-    void loadFamily();
-  }, [loadFamily]);
+    loadFamily().catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // ---------------------------------------------------------------------------
   const createFamily = useCallback(async (
@@ -162,8 +163,9 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
 }
 
 // ---------------------------------------------------------------------------
-// Hook
+// Hook — co-located with provider by convention
 // ---------------------------------------------------------------------------
+// eslint-disable-next-line react-refresh/only-export-components
 export function useFamily(): FamilyContextValue {
   const ctx = useContext(FamilyContext);
   if (!ctx) throw new Error('useFamily must be used inside <FamilyProvider>');
