@@ -217,7 +217,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
         {upcomingHook.loading ? <Spinner /> :
          upcomingDays.length === 0 ? (
           <Card>
-            <EmptyState icon="🗓️" title="אין אירועים השבוע הקרוב" />
+            <EmptyState icon="🗓️" title="אין אירועים בשבוע הקרוב" />
           </Card>
         ) : (
           <div className="space-y-4">

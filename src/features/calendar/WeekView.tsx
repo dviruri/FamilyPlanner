@@ -70,7 +70,7 @@ export function WeekView({
       {!loading && !hasAny && (
         <EmptyState
           icon="🗓️"
-          title="אין אירועים השבוע"
+          title="אין אירועים בשבוע זה"
           description="לחץ על + כדי להוסיף אירוע"
           actionLabel="הוסף אירוע"
           onAction={() => onAddEvent(today)}
