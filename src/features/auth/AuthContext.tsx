@@ -127,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}${window.location.pathname.startsWith('/FamilyPlanner') ? '/FamilyPlanner/' : '/'}`,
+        redirectTo: `${import.meta.env.VITE_APP_URL ?? window.location.origin}/`,
       },
     });
     if (error) return hebrewAuthError(error);
