@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
+import { GoogleSignInButton } from './GoogleSignInButton';
 
 export function AuthScreen() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -16,8 +17,20 @@ export function AuthScreen() {
           <p className="text-sm text-gray-500 mt-1">מרכז הפיקוד של המשפחה שלך</p>
         </div>
 
+        {/* Google sign-in — prominent, above everything */}
+        <div className="mb-4">
+          <GoogleSignInButton />
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400 font-medium">או עם אימייל וסיסמה</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
         {/* Tab switcher */}
-        <div className="flex bg-gray-100 rounded-2xl p-1 mb-6">
+        <div className="flex bg-gray-100 rounded-2xl p-1 mb-4">
           <button
             onClick={() => setMode('login')}
             className={[
@@ -42,7 +55,7 @@ export function AuthScreen() {
           </button>
         </div>
 
-        {/* Form */}
+        {/* Email/password form */}
         <div className="bg-white rounded-3xl shadow-lg p-6 border border-gray-100">
           {mode === 'login'
             ? <LoginForm onSwitchToRegister={() => setMode('register')} />
