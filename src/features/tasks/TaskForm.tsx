@@ -2,9 +2,10 @@ import { useState, type FormEvent } from 'react';
 import { Button } from '../../components/ui/Button';
 import { useFamily } from '../family/FamilyContext';
 import { TASK_CATEGORIES, PRIORITY_META } from './taskMeta';
+import { RECURRENCE_OPTIONS } from '../../utils/recurrence';
 import type { TaskRow } from '../../types/database';
 
-interface TaskFormData {
+export interface TaskFormData {
   title: string;
   description: string;
   assignedTo: string;
@@ -12,6 +13,7 @@ interface TaskFormData {
   dueTime: string;
   priority: TaskRow['priority'];
   category: string;
+  recurrenceRule: string;
 }
 
 interface TaskFormProps {
@@ -28,17 +30,18 @@ export function TaskForm({ initial, onSubmit, onCancel }: TaskFormProps) {
   const [assignedTo, setAssignedTo] = useState(initial?.assigned_to ?? '');
   const [dueDate, setDueDate]       = useState(initial?.due_date ?? '');
   const [dueTime, setDueTime]       = useState(initial?.due_time?.slice(0, 5) ?? '');
-  const [priority, setPriority]     = useState<TaskRow['priority']>(initial?.priority ?? 'normal');
-  const [category, setCategory]     = useState(initial?.category ?? '');
-  const [error, setError]           = useState<string | null>(null);
-  const [busy, setBusy]             = useState(false);
+  const [priority, setPriority]         = useState<TaskRow['priority']>(initial?.priority ?? 'normal');
+  const [category, setCategory]         = useState(initial?.category ?? '');
+  const [recurrenceRule, setRecurrenceRule] = useState(initial?.recurrence_rule ?? '');
+  const [error, setError]               = useState<string | null>(null);
+  const [busy, setBusy]                 = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!title.trim()) { setError('כותרת היא שדה חובה'); return; }
     setError(null);
     setBusy(true);
-    await onSubmit({ title: title.trim(), description, assignedTo, dueDate, dueTime, priority, category });
+    await onSubmit({ title: title.trim(), description, assignedTo, dueDate, dueTime, priority, category, recurrenceRule });
     setBusy(false);
   }
 
@@ -122,6 +125,24 @@ export function TaskForm({ initial, onSubmit, onCancel }: TaskFormProps) {
               }`}>
               <span className="text-base">{c.icon}</span>
               {c.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Recurrence */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">חזרה</label>
+        <div className="flex gap-2 flex-wrap">
+          {RECURRENCE_OPTIONS.map((opt) => (
+            <button type="button" key={opt.value}
+              onClick={() => setRecurrenceRule(opt.value)}
+              className={`px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors ${
+                recurrenceRule === opt.value
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}>
+              {opt.value ? `🔄 ${opt.label}` : opt.label}
             </button>
           ))}
         </div>

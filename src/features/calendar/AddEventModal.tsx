@@ -28,7 +28,8 @@ export function AddEventModal({ defaultDate, onClose, onRefresh }: AddEventModal
       { family_id: activeFamily.id, title: data.title, start_time: start, end_time: end,
         all_day: data.allDay, location: data.location || undefined,
         description: data.description || undefined, category: data.category,
-        created_by: user.id, visibility: 'family' },
+        created_by: user.id, visibility: 'family',
+        recurrence_rule: data.recurrenceRule || undefined },
       data.participantIds,
     );
     onRefresh();

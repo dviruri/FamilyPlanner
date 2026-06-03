@@ -4,9 +4,10 @@ import { useAuth } from '../auth/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { CATEGORIES } from './categoryMeta';
 import { toTimestamp, toDateInput, toTimeInput } from '../../utils/eventTime';
+import { RECURRENCE_OPTIONS } from '../../utils/recurrence';
 import type { EventWithParticipants } from '../../services/eventsService';
 
-interface EventFormData {
+export interface EventFormData {
   title: string;
   date: string;
   startTime: string;
@@ -16,6 +17,7 @@ interface EventFormData {
   description: string;
   category: string;
   participantIds: string[];
+  recurrenceRule: string; // '' = none
 }
 
 interface EventFormProps {
@@ -43,6 +45,7 @@ export function EventForm({ initial, defaultDate, onSubmit, onCancel, loading }:
   const [participants, setParticipants] = useState<string[]>(
     initial?.participantIds ?? (user ? [] : []),
   );
+  const [recurrenceRule, setRecurrenceRule] = useState(initial?.recurrence_rule ?? '');
   const [error, setError]           = useState<string | null>(null);
   const [busy, setBusy]             = useState(false);
 
@@ -69,7 +72,7 @@ export function EventForm({ initial, defaultDate, onSubmit, onCancel, loading }:
     }
 
     setBusy(true);
-    await onSubmit({ title: title.trim(), date, startTime, endTime, allDay, location, description, category, participantIds: participants });
+    await onSubmit({ title: title.trim(), date, startTime, endTime, allDay, location, description, category, participantIds: participants, recurrenceRule });
     setBusy(false);
   }
 
@@ -143,6 +146,27 @@ export function EventForm({ initial, defaultDate, onSubmit, onCancel, loading }:
         <label className="block text-sm font-semibold text-gray-700 mb-1.5">מיקום</label>
         <input type="text" value={location} onChange={(e) => setLocation(e.target.value)}
           placeholder="כתובת / שם המקום" className={inputCls} />
+      </div>
+
+      {/* Recurrence */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">חזרה</label>
+        <div className="flex gap-2 flex-wrap">
+          {RECURRENCE_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setRecurrenceRule(opt.value)}
+              className={`px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors ${
+                recurrenceRule === opt.value
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {opt.value ? `🔄 ${opt.label}` : opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Description */}

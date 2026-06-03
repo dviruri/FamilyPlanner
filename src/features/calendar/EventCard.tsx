@@ -60,7 +60,12 @@ export function EventCard({ event, members, onClick, compact = false }: EventCar
         {event.location && (
           <div className="text-xs text-gray-400 mt-0.5 truncate">📍 {event.location}</div>
         )}
-        <div className="text-xs text-gray-400 mt-0.5">{meta.label}</div>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-xs text-gray-400">{meta.label}</span>
+          {event.recurrence_rule && (
+            <span className="text-xs text-blue-500 font-medium">🔄 חוזר</span>
+          )}
+        </div>
       </div>
 
       {/* Participants */}

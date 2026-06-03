@@ -72,6 +72,9 @@ export function TaskCard({ task, members, onToggleComplete, onClick, busy }: Tas
           {task.status === 'in_progress' && (
             <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
           )}
+          {task.recurrence_rule && (
+            <span className="text-xs text-blue-500 font-medium">🔄 חוזר</span>
+          )}
         </div>
       </div>
 

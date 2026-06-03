@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { TaskForm } from './TaskForm';
 import { PRIORITY_META, STATUS_META, formatDueDate, TASK_CATEGORIES } from './taskMeta';
 import { updateTask, deleteTask, completeTask, reopenTask } from '../../services/tasksService';
+import { RECURRENCE_LABELS } from '../../utils/recurrence';
 import type { TaskRow } from '../../types/database';
 
 interface TaskDetailsModalProps {
@@ -37,7 +38,8 @@ export function TaskDetailsModal({ task, onClose, onRefresh }: TaskDetailsModalP
       due_date: data.dueDate || null,
       due_time: data.dueTime ? `${data.dueTime}:00` : null,
       priority: data.priority,
-      category: data.category || undefined,
+      category:        data.category || undefined,
+      recurrence_rule: data.recurrenceRule || null,
     });
     setBusy(false);
     if (err) { setError(err); return; }
@@ -99,6 +101,16 @@ export function TaskDetailsModal({ task, onClose, onRefresh }: TaskDetailsModalP
                   </span>
                 )}
               </div>
+
+              {/* Recurrence */}
+              {task.recurrence_rule && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">🔄</span>
+                  <span className="text-sm text-blue-600 font-medium">
+                    {RECURRENCE_LABELS[task.recurrence_rule] ?? task.recurrence_rule}
+                  </span>
+                </div>
+              )}
 
               {/* Assignee */}
               {assignee && (

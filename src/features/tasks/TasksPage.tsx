@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { createTask, completeTask, reopenTask } from '../../services/tasksService';
+import type { TaskFormData } from './TaskForm';
 import { todayKey } from '../../utils/calendarDates';
 import type { TaskRow, FamilyMemberRow } from '../../types/database';
 
@@ -48,10 +49,7 @@ function AddTaskModal({
   const { activeFamily } = useFamily();
   const { user }         = useAuth();
 
-  async function handleSubmit(data: {
-    title: string; description: string; assignedTo: string; dueDate: string;
-    dueTime: string; priority: TaskRow['priority']; category: string;
-  }) {
+  async function handleSubmit(data: TaskFormData) {
     if (!activeFamily || !user) return;
     await createTask({
       family_id:   activeFamily.id,
@@ -62,7 +60,8 @@ function AddTaskModal({
       due_date:    data.dueDate || undefined,
       due_time:    data.dueTime ? `${data.dueTime}:00` : undefined,
       priority:    data.priority,
-      category:    data.category || undefined,
+      category:        data.category || undefined,
+      recurrence_rule: data.recurrenceRule || undefined,
     });
     onRefresh();
     onClose();

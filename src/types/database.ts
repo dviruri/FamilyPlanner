@@ -144,7 +144,7 @@ export interface EventUpdate {
   category?: string;
   color?: string;
   visibility?: EventVisibility;
-  recurrence_rule?: string;
+  recurrence_rule?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -210,6 +210,7 @@ export interface TaskUpdate {
   status?: TaskStatus;
   priority?: TaskPriority;
   category?: string;
+  recurrence_rule?: string | null;
   completed_at?: string | null;
   completed_by?: string | null;
 }

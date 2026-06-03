@@ -6,6 +6,7 @@ import { EventForm } from './EventForm';
 import { CATEGORY_META } from './categoryMeta';
 import { formatEventDate, formatEventTime, toTimestamp } from '../../utils/eventTime';
 import { updateEvent, deleteEvent } from '../../services/eventsService';
+import { RECURRENCE_LABELS } from '../../utils/recurrence';
 import type { EventWithParticipants } from '../../services/eventsService';
 
 interface EventDetailsModalProps {
@@ -38,7 +39,8 @@ export function EventDetailsModal({ event, onClose, onRefresh }: EventDetailsMod
       event.id,
       { title: data.title, start_time: start, end_time: end, all_day: data.allDay,
         location: data.location || undefined, description: data.description || undefined,
-        category: data.category, visibility: 'family' },
+        category: data.category, visibility: 'family',
+        recurrence_rule: data.recurrenceRule || null },
       data.participantIds,
     );
     if (err) { setError(err); return; }
@@ -47,7 +49,11 @@ export function EventDetailsModal({ event, onClose, onRefresh }: EventDetailsMod
   }
 
   async function handleDelete() {
-    if (!confirm('למחוק את האירוע?')) return;
+    const isRecurring = !!event.recurrence_rule;
+    const msg = isRecurring
+      ? 'זהו אירוע חוזר. מחיקה תסיר את כל המופעים של הסדרה. להמשיך?'
+      : 'למחוק את האירוע?';
+    if (!confirm(msg)) return;
     setDeleting(true);
     const { error: err } = await deleteEvent(event.id);
     setDeleting(false);
@@ -100,6 +106,19 @@ export function EventDetailsModal({ event, onClose, onRefresh }: EventDetailsMod
                 <div className="flex items-start gap-3">
                   <span className="text-xl mt-0.5">📍</span>
                   <span className="text-sm text-gray-700">{event.location}</span>
+                </div>
+              )}
+
+              {/* Recurrence */}
+              {event.recurrence_rule && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🔄</span>
+                  <span className="text-sm text-gray-700">
+                    {RECURRENCE_LABELS[event.recurrence_rule] ?? event.recurrence_rule}
+                  </span>
+                  <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                    עריכה משנה את כל הסדרה
+                  </span>
                 </div>
               )}
 

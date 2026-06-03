@@ -1,4 +1,5 @@
 import { supabase } from './supabase/client';
+import { expandEvents } from '../utils/recurrence';
 import type { EventRow, EventInsert, EventUpdate } from '../types/database';
 
 // ---------------------------------------------------------------------------
@@ -28,29 +29,49 @@ export async function getEventsForRange(
   startISO: string,
   endISO: string,
 ): Promise<{ data: EventWithParticipants[]; error: string | null }> {
-  const { data: events, error } = await supabase
-    .from('events')
-    .select('*, event_participants(family_member_id)')
-    .eq('family_id', familyId)
-    .gte('start_time', startISO)
-    .lte('start_time', endISO)
-    .order('start_time');
+  // Fetch in two passes:
+  // 1. One-time events that fall within the range.
+  // 2. All recurring events whose series start ≤ rangeEnd (expanded client-side).
+  const [onetimeResult, recurringResult] = await Promise.all([
+    supabase
+      .from('events')
+      .select('*, event_participants(family_member_id)')
+      .eq('family_id', familyId)
+      .is('recurrence_rule', null)
+      .gte('start_time', startISO)
+      .lte('start_time', endISO),
+    supabase
+      .from('events')
+      .select('*, event_participants(family_member_id)')
+      .eq('family_id', familyId)
+      .not('recurrence_rule', 'is', null)
+      .lte('start_time', endISO), // series must have started before range end
+  ]);
 
-  if (error) {
-    console.error('[eventsService] getEventsForRange:', error);
-    return { data: [], error: dbError(error.message) };
+  if (onetimeResult.error) {
+    console.error('[eventsService] getEventsForRange (one-time):', onetimeResult.error);
+    return { data: [], error: dbError(onetimeResult.error.message) };
+  }
+  if (recurringResult.error) {
+    console.error('[eventsService] getEventsForRange (recurring):', recurringResult.error);
+    return { data: [], error: dbError(recurringResult.error.message) };
   }
 
-  const enriched: EventWithParticipants[] = (events ?? []).map((e) => {
-    const raw = e as unknown as EventRow & { event_participants?: { family_member_id: string }[] };
-    const participants = raw.event_participants ?? [];
-    return {
-      ...raw,
-      participantIds: participants.map((p) => p.family_member_id),
-    };
-  });
+  function enrich(rows: unknown[]): EventWithParticipants[] {
+    return (rows ?? []).map((e) => {
+      const raw = e as EventRow & { event_participants?: { family_member_id: string }[] };
+      return { ...raw, participantIds: (raw.event_participants ?? []).map((p) => p.family_member_id) };
+    });
+  }
 
-  return { data: enriched, error: null };
+  const oneTime  = enrich(onetimeResult.data ?? []);
+  const recurring = enrich(recurringResult.data ?? []);
+
+  // Expand recurring events into occurrences within range, then merge
+  const expanded = expandEvents(recurring, startISO, endISO);
+  const all = [...oneTime, ...expanded].sort((a, b) => a.start_time.localeCompare(b.start_time));
+
+  return { data: all, error: null };
 }
 
 // ---------------------------------------------------------------------------
